@@ -33,17 +33,11 @@ def render_task_table(main_category_filter: str):
     ]
     table = ui.table(columns=columns, rows=[], row_key='id', pagination=10).classes('w-full')
 
-    # @table.add_slot('body-cell-actions')
-    # def _(row):
-    #     with ui.row().classes('gap-2').on('click.stop', None):
-    #         ui.button(icon='edit', on_click=lambda: show_edit_task_dialog(row['id'])).props('flat color=primary')
-    #         ui.button(icon='delete', on_click=lambda: confirm_delete(row['id'])).props('flat color=negative')
-    
-    table.add_slot('body-cell-actions', lambda row: ui.row().classes('gap-2').on('click.stop', None).add(
-    ui.button(icon='edit', on_click=lambda: show_edit_task_dialog(row['id'])).props('flat color=primary'),
-    ui.button(icon='delete', on_click=lambda: confirm_delete(row['id'])).props('flat color=negative')
-))
-
+    @table.add_slot('body-cell-actions')
+    def _(row):
+        with ui.row().classes('gap-2').on('click.stop', None):
+            ui.button(icon='edit', on_click=lambda: show_edit_task_dialog(row['id'])).props('flat color=primary')
+            ui.button(icon='delete', on_click=lambda: confirm_delete(row['id'])).props('flat color=negative')
 
     def refresh_tasks():
         session = SessionLocal()
