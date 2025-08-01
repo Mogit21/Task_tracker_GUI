@@ -38,12 +38,18 @@ def render_task_table(main_category_filter: str):
     #     with ui.row().classes('gap-2').on('click.stop', None):
     #         ui.button(icon='edit', on_click=lambda: show_edit_task_dialog(row['id'])).props('flat color=primary')
     #         ui.button(icon='delete', on_click=lambda: confirm_delete(row['id'])).props('flat color=negative')
-    
-    table.add_slot('body-cell-actions', lambda row: ui.row().classes('gap-2').on('click.stop', None).add(
-    ui.button(icon='edit', on_click=lambda: show_edit_task_dialog(row['id'])).props('flat color=primary'),
-    ui.button(icon='delete', on_click=lambda: confirm_delete(row['id'])).props('flat color=negative')
-))
 
+    with table.add_slot('body-cell-actions'):
+        def _(row):
+            with ui.row().classes('gap-2').on('click.stop', None):
+                ui.button(icon='edit', on_click=lambda: show_edit_task_dialog(row['id'])).props('flat color=primary')
+                ui.button(icon='delete', on_click=lambda: confirm_delete(row['id'])).props('flat color=negative')
+
+    # with table.add_slot('body-cell-actions'):
+    #     def _(row):
+    #         with ui.row().classes('gap-2').on('click.stop', None):
+    #             ui.button(icon='edit', on_click=lambda task_id=row['id']: show_edit_task_dialog(task_id)).props('flat color=primary')
+    #             ui.button(icon='delete', on_click=lambda task_id=row['id']: confirm_delete(task_id)).props('flat color=negative')
 
     def refresh_tasks():
         session = SessionLocal()
@@ -51,7 +57,7 @@ def render_task_table(main_category_filter: str):
             Category.main_category == main_category_filter).all()
         categories = {c.id: c.sub_category for c in session.query(Category).all()}
         session.close()
-        table.rows = [{
+        table. s = [{
             'id': t.id,
             'category': categories.get(t.category_id, 'Unknown'),
             'description': t.description,
@@ -149,3 +155,5 @@ def render_task_table(main_category_filter: str):
                 dialog.close()
                 refresh_tasks()
         dialog.open()
+
+    refresh_tasks()
